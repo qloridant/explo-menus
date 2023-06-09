@@ -6,3 +6,4 @@ matplotlib
 nbformat
 nbclient
 jupyter-cache
+seaborn

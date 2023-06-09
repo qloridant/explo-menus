@@ -1,0 +1,57 @@
+---
+title: "Explos menu cantines"
+author:
+  - "Quentin"
+  - "Hugo"
+date: "2023-05-24"
+format:
+  html:
+    embed-resources: true
+    code-fold: true
+    theme:
+      - readable
+    toc: true
+    toc-depth: 2
+execute:
+  cache: true
+---
+
+
+
+# Import des données et des librairies
+```{python import}
+import pandas as pd
+import os
+import datetime
+import json
+import squarify
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+```
+```{python Import des données des campagnes}
+menus = pd.read_csv("data/menu.csv", sep="\t", encoding="utf-8")
+```
+
+```{python Diversité par régime}
+plats = menus[menus.menuPlatType == "PLAT"]
+div_poisson = len(plats[plats.menuPlatRegime == '["BLEU - mixte poisson"]']['menuPlatNom'].unique())
+div_vege = len(plats[plats.menuPlatRegime == '["VERT - v�g�tarien"]']['menuPlatNom'].unique())
+div_carne = len(plats[plats.menuPlatRegime == '["ROUGE - mixte viande et poisson"]']['menuPlatNom'].unique())
+```
+
+# Visualisation de la répartition et de la diversité des menus en fonction des régimes
+```{python Vizu Diversité des menus}
+color = sns.color_palette("rocket", as_cmap=True, n_colors=3)
+
+regimes = menus.groupby("menuPlatRegime").count()
+regimes = regimes.sort_values(by="menuCollNom", ascending=False)
+regimes = regimes.head(3)
+
+label = [f'Carne : {div_carne} plats différents', f'Poisson : {div_poisson} plats différents', f'Végé : {div_vege} plats différents']
+squarify.plot(sizes=regimes['menuCollNom'], label=label, alpha=.8, color=[color(0.1), color(0.5), color(0.9)])
+plt.axis('off')
+# Display the legend
+plt.legend(loc='center', bbox_to_anchor=(0.5, -0.1), ncol=5, frameon=True)
+plt.show()
+```
